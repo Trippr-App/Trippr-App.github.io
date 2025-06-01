@@ -6,6 +6,7 @@
   <title>Trippr</title>
   <link rel="icon" href="../../assets/images/logo.png" />
 
+  <!-- iOS PWA meta tags -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Trippr" />
@@ -13,8 +14,28 @@
   <meta name="theme-color" content="#14074c" />
   <link rel="manifest" href="../manifest.json" />
 
-
   <style>
+    /* Hide everything by default; script will unhide as needed */
+    #app-content, #fallback-message { display: none; }
+
+    /* Fallback message styling */
+    #fallback-message {
+      min-height: 100vh;
+      background: #1A1423;
+      color: #ECEFF4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      font-family: sans-serif;
+    }
+    #fallback-message a {
+      color: #2DD4BF;
+      text-decoration: underline;
+    }
+
+    /* Your existing CSS below... */
     @font-face { font-family: 'Hippie Mods'; src: url('../../assets/fonts/Hippie Mods.otf') format('opentype'); }
     :root {
       --bg-color: #1A1423;
@@ -47,6 +68,7 @@
         radial-gradient(circle at 70% 70%, #63109e52, transparent 50%);
       z-index: -1;
     }
+    /* … rest of your existing CSS (header, main, nav, cards, planner, etc.) … */
     header {
       height: 8%;
       background: #000;
@@ -88,10 +110,7 @@
     .btn-small {
       width: auto; padding: 0.5rem 1rem; font-size: 0.9rem;
     }
-
-    /* UPDATED: Less-aggressive “Bad Trip” button */
     .panic-btn {
-      /* Uses the accent gradient */
       background: var(--accent-gradient);
       color: #fff;
       font-size: 1rem;
@@ -99,11 +118,9 @@
       width: auto;
       border: none;
       border-radius: var(--card-radius);
-      margin-right: 0.5rem; /* space between buttons */
+      margin-right: 0.5rem;
     }
     .panic-btn:hover { transform: scale(1.03); }
-
-    /* Beginner’s Guide button (same style as .btn-small for contrast) */
     .guide-btn {
       background: rgba(255,255,255,0.1);
       border: 2px solid var(--input-border);
@@ -117,7 +134,6 @@
       background: rgba(255,255,255,0.2);
       transform: scale(1.03);
     }
-
     nav {
       position: fixed; bottom: 0; width: 100%; height: 60px;
       background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
@@ -183,17 +199,13 @@
     .planner input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     .planner button { grid-column: span 2; margin-top: 1.5rem; }
     #result { display: none; opacity: 0; transition: opacity 0.3s; margin-top: 1rem; }
-    /* Strain Results */
     #strain-results { list-style: none; padding: 0; margin-top: 1rem; }
     #strain-results li {
       display: flex; align-items: center; gap: 0.75rem;
       background: rgba(255,255,255,0.02);
       padding: 0.5rem; border-radius: var(--card-radius);
     }
-    /* UPDATED: Larger strain images */
     #strain-results img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; }
-
-    /* Full-screen video overlay (initially hidden) */
     #video-overlay {
       display: none;
       position: fixed; top: 0; left: 0;
@@ -209,8 +221,6 @@
       height: 45%;
       max-height: 450px;
       border: none;
-      /* NOTE: src is intentionally left empty here */
-      /* src="" */
     }
     #video-overlay .close-btn {
       margin-top: 1rem;
@@ -227,247 +237,288 @@
       transform: scale(1.05);
     }
   </style>
-</head>
-<body>
-  <header>Trippr</header>
-  <main>
-    <!-- Home -->
-    <section id="home" class="section active">
-      <h2>Home</h2>
-      <div class="card">
-        <h3>Welcome to Trippr 🌀💫</h3>
-        <p>Your personal psychedelic companion. Plan trips, learn the basics, and stay connected.<br><br></p>
-        <p>This app will be regularly updated. I plan on adding more educational tools and maybe some fun games and such. Join the discord to make suggestions!</p>
-           <img src="../../assets/images/post1.png" alt="Trippr Post" style="width:100%; border-radius:var(--card-radius); margin-top:1rem;">
-        <button onclick="goTab('planner')" style="margin-top:1rem;">Plan Your Trip</button>
-      </div>
-      <div class="card">
-        <h3>Beginner's Guide 👁️🌟</h3>
-        <p>New to psychedelics? We've got you covered with essential tips and safe-practice advice.</p>
-        <button class="btn-small" onclick="goTab('guide')" style="margin-top:1rem;">Read Guide</button>
-      </div>
-      <div class="card" style="display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center;">
-          <img src="../../assets/images/discord-icon.png" alt="Discord" width="32" style="margin-right:0.75rem;">
-          <div><h3>Join Our Discord 💬</h3><p>Connect with fellow psychonauts for tips, music, and support.</p></div>
-        </div>
-        <button class="btn-small" onclick="window.open('https://discord.gg/MMJ5Cg3vQb')">Join</button>
-      </div>
-    </section>
 
-    <!-- Trip Planner -->
-    <section id="planner" class="section">
-      <h2>Trip Planner</h2>
-      <div class="card planner">
-        <label for="weight">Weight</label>
-        <input type="number" id="weight" placeholder="Enter weight">
-        <label for="unit">Unit</label>
-        <select id="unit">
-          <option value="lb">Pounds (lb)</option>
-          <option value="kg">Kilograms (kg)</option>
-        </select>
-        <label for="type">Mushroom Type</label>
-        <select id="type">
-          <option>Hillbilly</option>
-          <option>Bluey Vuitton</option>
-          <option>Enigma</option>
-          <option>Penis Envy</option>
-          <option>Golden Teacher</option>
-          <option>Albino A+</option>
-          <option>B+-strain</option>
-          <option>Puerto Rican</option>
-        </select>
-        <label for="intensity">Intensity</label>
-        <div class="range-container">
-          <span>Microdose</span>
-          <input type="range" id="intensity" min="1" max="5" value="3">
-          <span>Intense</span>
-        </div>
-        <button onclick="calculateDose()">Calculate Dose</button>
-      </div>
-      <div id="result" class="card"></div>
-    </section>
-
-    <!-- Trip Guide -->
-    <section id="guide" class="section">
-      <h2>Trip Guide</h2>
-      <!-- Panic Button (now “Bad Trip”) and Beginner’s Guide button -->
-      <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-        <button class="panic-btn" onclick="handleBadTrip()">Bad Trip</button>
-        <button class="guide-btn" onclick="window.open('/pages/guide')">Beginner's Guide</button>
-      </div>
-
-      <!-- Mushroom Library -->
-      <div class="card">
-        <h3>Mushroom Library 📚</h3>
-        <div style="display:flex; gap:1rem; align-items:center;">
-          <input type="search" id="strain-search" list="strain-suggestions" placeholder="Search strains..." style="flex:1; height:var(--input-height); padding:0 1rem; border:2px solid var(--input-border); border-radius:var(--card-radius); background:var(--input-bg); color:var(--text-color);">
-          <datalist id="strain-suggestions"></datalist>
-          <button class="btn-small" onclick="searchStrain()">Search</button>
-        </div>
-        <ul id="strain-results"></ul>
-      </div>
-
-      <!-- Featured Playlists -->
-      <div class="card">
-        <h3>Psychedelic Beats 🍄🎧</h3>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem;">
-          <!-- 1.png → “Sink into the Floor” by Feng Suave -->
-          <div style="text-align:center;">
-            <a href="https://open.spotify.com/track/4UCiDcv0yO9tNLZbkZeBBA" target="_blank">
-              <img src="../../assets/images/1.png" alt="Sink into the Floor" style="width:100%; border-radius:var(--card-radius);">
-            </a>
-            <p style="margin-top:0.5rem;">Dreamy</p>
-          </div>
-          <!-- 2.png → “PARADISE” by NOT THE TWOS -->
-          <div style="text-align:center;">
-            <a href="https://open.spotify.com/track/6rZjqLz4k7psYLWDgDTw8l" target="_blank">
-              <img src="../../assets/images/2.png" alt="PARADISE" style="width:100%; border-radius:var(--card-radius);">
-            </a>
-            <p style="margin-top:0.5rem;">Soul</p>
-          </div>
-          <!-- 3.png → “Lovesong” by Common Saints -->
-          <div style="text-align:center;">
-            <a href="https://open.spotify.com/track/1J7uPqs46vgRZZ5ZhiPG3Y" target="_blank">
-              <img src="../../assets/images/3.png" alt="Lovesong" style="width:100%; border-radius:var(--card-radius);">
-            </a>
-            <p style="margin-top:0.5rem;">Good Vibes</p>
-          </div>
-          <!-- 4.png → “She’s a Rainbow” by The Rolling Stones -->
-          <div style="text-align:center;">
-            <a href="https://open.spotify.com/track/6KOtheMY0KN4s9TrQHr9It" target="_blank">
-              <img src="../../assets/images/4.png" alt="She’s a Rainbow" style="width:100%; border-radius:var(--card-radius);">
-            </a>
-            <p style="margin-top:0.5rem;">Colorful</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mind Games Section -->
-      <div class="card">
-        <h3>Trip Games 🧠</h3>
-        <p>Coming soon...</p>
-      </div>
-    </section>
-  </main>
-
-  <!-- Navigation Tabs -->
-  <nav>
-    <div class="tab active" onclick="goTab('home')">🏠</div>
-    <div class="tab" onclick="goTab('planner')">🍄</div>
-    <div class="tab" onclick="goTab('guide')">📖</div>
-  </nav>
-
-  <!-- Hidden full-screen video overlay with no initial src -->
-  <div id="video-overlay">
-    <iframe
-      src=""                               <!-- removed autoplay src here -->
-      title="YouTube video player"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowfullscreen
-    ></iframe>
-    <button class="close-btn" onclick="closeVideo()">Close</button>
-  </div>
-
+  <!-- Detection script: runs on DOMContentLoaded, shows either the app or a fallback message -->
   <script>
-    // Potency map
-    const strengthMap = {
-      'Hillbilly': 0.9, 'Bluey Vuitton': 1.1, 'Enigma': 1.4,
-      'Penis Envy': 1.8, 'Golden Teacher': 1.0, 'Albino A+': 1.2,
-      'B+-strain': 0.9, 'Puerto Rican': 1.1
-    };
-    // Base doses
-    const baseDoseMap = {1:0.1, 2:0.5, 3:1.5, 4:3, 5:4};
-    // Strain library with qualitative potency
-    const strainLibrary = [
-      {species:'Psilocybe cubensis',name:'Hillbilly',level:'Medium',image:'../../assets/images/hillbilly.jpg'},
-      {species:'Psilocybe cubensis',name:'Bluey Vuitton',level:'Medium',image:'../../assets/images/bluey_vuitton.jpg'},
-      {species:'Psilocybe cubensis',name:'Enigma',level:'High',image:'../../assets/images/enigma.jpg'},
-      {species:'Psilocybe cubensis',name:'Penis Envy',level:'High',image:'../../assets/images/penis_envy.jpg'},
-      {species:'Psilocybe cubensis',name:'Golden Teacher',level:'Medium',image:'../../assets/images/golden_teacher.jpg'},
-      {species:'Psilocybe cubensis',name:'Albino A+',level:'Medium',image:'../../assets/images/albino_a_plus.jpg'},
-      {species:'Psilocybe cubensis',name:'B+',level:'Low',image:'../../assets/images/b_plus.jpg'},
-      {species:'Psilocybe cubensis',name:'Puerto Rican',level:'Medium',image:'../../assets/images/puerto_rican.jpg'}
-    ];
+    document.addEventListener('DOMContentLoaded', function() {
+      // Detect iOS UA
+      const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      // Detect standalone mode (homescreen) for iOS
+      const isInStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
 
-    // Video URL (only loaded on demand)
-    const badTripVideoURL = "https://www.youtube.com/embed/Hx3IH2H0bz0?autoplay=1&controls=0";
+      const appContent = document.getElementById('app-content');
+      const fallback = document.getElementById('fallback-message');
 
-    // Populate strain suggestions
-    window.addEventListener('DOMContentLoaded', () => {
-      const datalist = document.getElementById('strain-suggestions');
-      strainLibrary.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s.name;
-        datalist.appendChild(opt);
-      });
-    });
-
-    function goTab(id) {
-      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      document.querySelectorAll('nav .tab').forEach(t => t.classList.remove('active'));
-      document.querySelector(`nav .tab[onclick*="${id}"]`).classList.add('active');
-    }
-
-    function calculateDose() {
-      const w = parseFloat(document.getElementById('weight').value) || 0;
-      const pounds = document.getElementById('unit').value === 'kg' ? w * 2.205 : w;
-      const type = document.getElementById('type').value;
-      const intensity = parseInt(document.getElementById('intensity').value);
-      const base = baseDoseMap[intensity] || 1.5;
-      const dose = (base * (pounds / 150)) / (strengthMap[type] || 1);
-      const resultEl = document.getElementById('result');
-      resultEl.style.display = 'block';
-      resultEl.innerHTML = `
-        <h2>Recommended Dose</h2>
-        <p style="font-size:1.5rem;text-align:center;">${dose.toFixed(2)} g</p>
-        <p style="margin-top:0.5rem;">
-          This calculator is intended for your first couple of trips; more advanced trippers likely won't need this tool.
-        </p>`;
-      resultEl.style.opacity = 0;
-      setTimeout(() => resultEl.style.opacity = 1, 50);
-    }
-
-    function handleBadTrip() {
-      const overlay = document.getElementById("video-overlay");
-      const iframe = overlay.querySelector("iframe");
-      iframe.src = badTripVideoURL;   // only now set the src so it doesn’t autoplay on load
-      overlay.style.display = "flex";
-    }
-
-    function closeVideo() {
-      const overlay = document.getElementById("video-overlay");
-      const iframe = overlay.querySelector("iframe");
-      iframe.src = "";             // unloads the video 
-      overlay.style.display = "none";
-    }
-
-    function searchStrain() {
-      const term = document.getElementById('strain-search').value.toLowerCase();
-      const ul = document.getElementById('strain-results');
-      ul.innerHTML = '';
-      const results = strainLibrary.filter(s =>
-        s.name.toLowerCase().includes(term) ||
-        s.species.toLowerCase().includes(term)
-      );
-      if (!results.length) {
-        ul.innerHTML = '<li>No results found.</li>';
-        return;
+      if (!isIos) {
+        // Not iOS → show message to open on iOS or join Discord
+        fallback.innerHTML = `
+          <div>
+            <h2>Trippr is only available on iOS currently.</h2>
+            <p>Please open this page on an iOS device, or <a href="https://discord.gg/MMJ5Cg3vQb" target="_blank">join our Discord</a> for updates.</p>
+          </div>`;
+        fallback.style.display = 'flex';
+      } else if (!isInStandalone) {
+        // On iOS but not launched from homescreen → instruct “Add to Home Screen”
+        fallback.innerHTML = `
+          <div>
+            <h2>Install Trippr on your Home Screen</h2>
+            <p>Tap the <strong>Share</strong> button below, then select <strong>Add to Home Screen</strong> to install Trippr as a PWA.</p>
+            <p>Once added, open Trippr from your home screen to use it.</p>
+          </div>`;
+        fallback.style.display = 'flex';
+      } else {
+        // Running in standalone iOS → show the real app
+        appContent.style.display = 'block';
       }
-      results.forEach(s => {
-        const li = document.createElement('li');
-        const img = document.createElement('img');
-        img.src = s.image;
-        img.alt = s.name;
-        const info = document.createElement('div');
-        info.className = 'strain-info';
-        info.innerHTML = `<strong>${s.name}</strong> (${s.species})<br>Potency: ${s.level}`;
-        li.appendChild(img);
-        li.appendChild(info);
-        ul.appendChild(li);
-      });
-    }
+    });
   </script>
+</head>
+
+<body>
+  <!-- FALLBACK MESSAGE (hidden by default; shown only when not-iOS or not-installed) -->
+  <div id="fallback-message"></div>
+
+  <!-- ACTUAL APP CONTENT (hidden by default; shown only when on iOS & standalone) -->
+  <div id="app-content">
+    <header>Trippr</header>
+    <main>
+      <!-- Home -->
+      <section id="home" class="section active">
+        <h2>Home</h2>
+        <div class="card">
+          <h3>Welcome to Trippr 🌀💫</h3>
+          <p>Your personal psychedelic companion. Plan trips, learn the basics, and stay connected.<br><br></p>
+          <p>This app will be regularly updated. I plan on adding more educational tools and maybe some fun games and such. Join the discord to make suggestions!</p>
+          <img src="../../assets/images/post1.png" alt="Trippr Post" style="width:100%; border-radius:var(--card-radius); margin-top:1rem;">
+          <button onclick="goTab('planner')" style="margin-top:1rem;">Plan Your Trip</button>
+        </div>
+        <div class="card">
+          <h3>Beginner's Guide 👁️🌟</h3>
+          <p>New to psychedelics? We've got you covered with essential tips and safe-practice advice.</p>
+          <button class="btn-small" onclick="goTab('guide')" style="margin-top:1rem;">Read Guide</button>
+        </div>
+        <div class="card" style="display:flex; align-items:center; justify-content:space-between;">
+          <div style="display:flex; align-items:center;">
+            <img src="../../assets/images/discord-icon.png" alt="Discord" width="32" style="margin-right:0.75rem;">
+            <div><h3>Join Our Discord 💬</h3><p>Connect with fellow psychonauts for tips, music, and support.</p></div>
+          </div>
+          <button class="btn-small" onclick="window.open('https://discord.gg/MMJ5Cg3vQb')">Join</button>
+        </div>
+      </section>
+
+      <!-- Trip Planner -->
+      <section id="planner" class="section">
+        <h2>Trip Planner</h2>
+        <div class="card planner">
+          <label for="weight">Weight</label>
+          <input type="number" id="weight" placeholder="Enter weight">
+          <label for="unit">Unit</label>
+          <select id="unit">
+            <option value="lb">Pounds (lb)</option>
+            <option value="kg">Kilograms (kg)</option>
+          </select>
+          <label for="type">Mushroom Type</label>
+          <select id="type">
+            <option>Hillbilly</option>
+            <option>Bluey Vuitton</option>
+            <option>Enigma</option>
+            <option>Penis Envy</option>
+            <option>Golden Teacher</option>
+            <option>Albino A+</option>
+            <option>B+-strain</option>
+            <option>Puerto Rican</option>
+          </select>
+          <label for="intensity">Intensity</label>
+          <div class="range-container">
+            <span>Microdose</span>
+            <input type="range" id="intensity" min="1" max="5" value="3">
+            <span>Intense</span>
+          </div>
+          <button onclick="calculateDose()">Calculate Dose</button>
+        </div>
+        <div id="result" class="card"></div>
+      </section>
+
+      <!-- Trip Guide -->
+      <section id="guide" class="section">
+        <h2>Trip Guide</h2>
+        <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+          <button class="panic-btn" onclick="handleBadTrip()">Bad Trip</button>
+          <button class="guide-btn" onclick="window.open('/pages/guide')">Beginner's Guide</button>
+        </div>
+
+        <!-- Mushroom Library -->
+        <div class="card">
+          <h3>Mushroom Library 📚</h3>
+          <div style="display:flex; gap:1rem; align-items:center;">
+            <input type="search" id="strain-search" list="strain-suggestions" placeholder="Search strains..." style="flex:1; height:var(--input-height); padding:0 1rem; border:2px solid var(--input-border); border-radius:var(--card-radius); background:var(--input-bg); color:var(--text-color);">
+            <datalist id="strain-suggestions"></datalist>
+            <button class="btn-small" onclick="searchStrain()">Search</button>
+          </div>
+          <ul id="strain-results"></ul>
+        </div>
+
+        <!-- Featured Playlists -->
+        <div class="card">
+          <h3>Psychedelic Beats 🍄🎧</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem;">
+            <!-- 1.png → “Sink into the Floor” by Feng Suave -->
+            <div style="text-align:center;">
+              <a href="https://open.spotify.com/track/4UCiDcv0yO9tNLZbkZeBBA" target="_blank">
+                <img src="../../assets/images/1.png" alt="Sink into the Floor" style="width:100%; border-radius:var(--card-radius);">
+              </a>
+              <p style="margin-top:0.5rem;">Dreamy</p>
+            </div>
+            <!-- 2.png → “PARADISE” by NOT THE TWOS -->
+            <div style="text-align:center;">
+              <a href="https://open.spotify.com/track/6rZjqLz4k7psYLWDgDTw8l" target="_blank">
+                <img src="../../assets/images/2.png" alt="PARADISE" style="width:100%; border-radius:var(--card-radius);">
+              </a>
+              <p style="margin-top:0.5rem;">Soul</p>
+            </div>
+            <!-- 3.png → “Lovesong” by Common Saints -->
+            <div style="text-align:center;">
+              <a href="https://open.spotify.com/track/1J7uPqs46vgRZZ5ZhiPG3Y" target="_blank">
+                <img src="../../assets/images/3.png" alt="Lovesong" style="width:100%; border-radius:var(--card-radius);">
+              </a>
+              <p style="margin-top:0.5rem;">Good Vibes</p>
+            </div>
+            <!-- 4.png → “She’s a Rainbow” by The Rolling Stones -->
+            <div style="text-align:center;">
+              <a href="https://open.spotify.com/track/6KOtheMY0KN4s9TrQHr9It" target="_blank">
+                <img src="../../assets/images/4.png" alt="She’s a Rainbow" style="width:100%; border-radius:var(--card-radius);">
+              </a>
+              <p style="margin-top:0.5rem;">Colorful</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mind Games Section -->
+        <div class="card">
+          <h3>Trip Games 🧠</h3>
+          <p>Coming soon...</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Navigation Tabs -->
+    <nav>
+      <div class="tab active" onclick="goTab('home')">🏠</div>
+      <div class="tab" onclick="goTab('planner')">🍄</div>
+      <div class="tab" onclick="goTab('guide')">📖</div>
+    </nav>
+
+    <!-- Hidden full-screen video overlay with no initial src -->
+    <div id="video-overlay">
+      <iframe
+        src=""
+        title="YouTube video player"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+      <button class="close-btn" onclick="closeVideo()">Close</button>
+    </div>
+
+    <script>
+      // Potency map
+      const strengthMap = {
+        'Hillbilly': 0.9, 'Bluey Vuitton': 1.1, 'Enigma': 1.4,
+        'Penis Envy': 1.8, 'Golden Teacher': 1.0, 'Albino A+': 1.2,
+        'B+-strain': 0.9, 'Puerto Rican': 1.1
+      };
+      // Base doses
+      const baseDoseMap = {1:0.1, 2:0.5, 3:1.5, 4:3, 5:4};
+      // Strain library with qualitative potency
+      const strainLibrary = [
+        {species:'Psilocybe cubensis',name:'Hillbilly',level:'Medium',image:'../../assets/images/hillbilly.jpg'},
+        {species:'Psilocybe cubensis',name:'Bluey Vuitton',level:'Medium',image:'../../assets/images/bluey_vuitton.jpg'},
+        {species:'Psilocybe cubensis',name:'Enigma',level:'High',image:'../../assets/images/enigma.jpg'},
+        {species:'Psilocybe cubensis',name:'Penis Envy',level:'High',image:'../../assets/images/penis_envy.jpg'},
+        {species:'Psilocybe cubensis',name:'Golden Teacher',level:'Medium',image:'../../assets/images/golden_teacher.jpg'},
+        {species:'Psilocybe cubensis',name:'Albino A+',level:'Medium',image:'../../assets/images/albino_a_plus.jpg'},
+        {species:'Psilocybe cubensis',name:'B+',level:'Low',image:'../../assets/images/b_plus.jpg'},
+        {species:'Psilocybe cubensis',name:'Puerto Rican',level:'Medium',image:'../../assets/images/puerto_rican.jpg'}
+      ];
+
+      // Video URL (only loaded on demand)
+      const badTripVideoURL = "https://www.youtube.com/embed/Hx3IH2H0bz0?autoplay=1&controls=0";
+
+      // Populate strain suggestions
+      window.addEventListener('DOMContentLoaded', () => {
+        const datalist = document.getElementById('strain-suggestions');
+        strainLibrary.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.name;
+          datalist.appendChild(opt);
+        });
+      });
+
+      function goTab(id) {
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('nav .tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`nav .tab[onclick*="${id}"]`).classList.add('active');
+      }
+
+      function calculateDose() {
+        const w = parseFloat(document.getElementById('weight').value) || 0;
+        const pounds = document.getElementById('unit').value === 'kg' ? w * 2.205 : w;
+        const type = document.getElementById('type').value;
+        const intensity = parseInt(document.getElementById('intensity').value);
+        const base = baseDoseMap[intensity] || 1.5;
+        const dose = (base * (pounds / 150)) / (strengthMap[type] || 1);
+        const resultEl = document.getElementById('result');
+        resultEl.style.display = 'block';
+        resultEl.innerHTML = `
+          <h2>Recommended Dose</h2>
+          <p style="font-size:1.5rem;text-align:center;">${dose.toFixed(2)} g</p>
+          <p style="margin-top:0.5rem;">
+            This calculator is intended for your first couple of trips; more advanced trippers likely won't need this tool.
+          </p>`;
+        resultEl.style.opacity = 0;
+        setTimeout(() => resultEl.style.opacity = 1, 50);
+      }
+
+      function handleBadTrip() {
+        const overlay = document.getElementById("video-overlay");
+        const iframe = overlay.querySelector("iframe");
+        iframe.src = badTripVideoURL;
+        overlay.style.display = "flex";
+      }
+
+      function closeVideo() {
+        const overlay = document.getElementById("video-overlay");
+        const iframe = overlay.querySelector("iframe");
+        iframe.src = "";
+        overlay.style.display = "none";
+      }
+
+      function searchStrain() {
+        const term = document.getElementById('strain-search').value.toLowerCase();
+        const ul = document.getElementById('strain-results');
+        ul.innerHTML = '';
+        const results = strainLibrary.filter(s =>
+          s.name.toLowerCase().includes(term) ||
+          s.species.toLowerCase().includes(term)
+        );
+        if (!results.length) {
+          ul.innerHTML = '<li>No results found.</li>';
+          return;
+        }
+        results.forEach(s => {
+          const li = document.createElement('li');
+          const img = document.createElement('img');
+          img.src = s.image;
+          img.alt = s.name;
+          const info = document.createElement('div');
+          info.className = 'strain-info';
+          info.innerHTML = `<strong>${s.name}</strong> (${s.species})<br>Potency: ${s.level}`;
+          li.appendChild(img);
+          li.appendChild(info);
+          ul.appendChild(li);
+        });
+      }
+    </script>
+  </div>
 </body>
 </html>
