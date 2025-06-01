@@ -238,40 +238,43 @@
     }
   </style>
 
-  <!-- Detection script: runs on DOMContentLoaded, shows either the app or a fallback message -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Detect iOS UA
-      const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      // Detect standalone mode (homescreen) for iOS
-      const isInStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+ <script>
+    // 1) Detect iOS user-agent
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    // 2) On iOS, window.navigator.standalone === true only when launched from Home Screen
+    const isInStandalone = window.navigator.standalone === true;
 
-      const appContent = document.getElementById('app-content');
-      const fallback = document.getElementById('fallback-message');
+    const appContent = document.getElementById('app-content');
+    const fallback   = document.getElementById('fallback-message');
 
-      if (!isIos) {
-        // Not iOS → show message to open on iOS or join Discord
-        fallback.innerHTML = `
-          <div>
-            <h2>Trippr is only available on iOS currently.</h2>
-            <p>Please open this page on an iOS device, or <a href="https://discord.gg/MMJ5Cg3vQb" target="_blank">join our Discord</a> for updates.</p>
-          </div>`;
-        fallback.style.display = 'flex';
-      } else if (!isInStandalone) {
-        // On iOS but not launched from homescreen → instruct “Add to Home Screen”
-        fallback.innerHTML = `
-          <div>
-            <h2>Install Trippr on your Home Screen</h2>
-            <p>Tap the <strong>Share</strong> button below, then select <strong>Add to Home Screen</strong> to install Trippr as a PWA.</p>
-            <p>Once added, open Trippr from your home screen to use it.</p>
-          </div>`;
-        fallback.style.display = 'flex';
-      } else {
-        // Running in standalone iOS → show the real app
-        appContent.style.display = 'block';
-      }
-    });
-  </script>
+    if (!isIos) {
+      // Not iOS at all
+      fallback.innerHTML = `
+        <div>
+          <h2>Trippr is only available as an iOS PWA.</h2>
+          <p>Please open this page on an iOS device, or 
+             <a href="https://discord.gg/MMJ5Cg3vQb" target="_blank">join our Discord</a> for updates.</p>
+        </div>`;
+      fallback.style.display = 'flex';
+
+    } else if (!isInStandalone) {
+      // On iOS Safari but NOT launched from the Home Screen
+      fallback.innerHTML = `
+        <div>
+          <h2>Install Trippr on your Home Screen</h2>
+          <p>Tap the <strong>Share</strong> button, then select <strong>Add to Home Screen</strong> to install Trippr as a PWA.</p>
+          <p>Once added, open Trippr from your home screen to use it.</p>
+        </div>`;
+      fallback.style.display = 'flex';
+
+    } else {
+      // iOS AND in standalone mode → show the real app
+      appContent.style.display = 'block';
+    }
+
+    // For debugging: log both flags so you can confirm what’s happening
+    console.log('isIos:', isIos, 'isInStandalone:', isInStandalone);
+    </script>
 </head>
 
 <body>
