@@ -15,15 +15,22 @@
   <link rel="manifest" href="../manifest.json" />
 
   <style>
-    /* Hide everything by default; script will unhide as needed */
-    #app-content, #fallback-message { display: none; }
+    /* -------------------------------------------------------------------------------- */
+    /* 1) Hide both containers by default; the script below will un-hide exactly one of them */
+    /* -------------------------------------------------------------------------------- */
+    #app-content,
+    #fallback-message {
+      display: none;
+    }
 
-    /* Fallback message styling */
+    /* ----------------------------------------------------------------------------- */
+    /* 2) Styling for the fallback prompt (non-iOS or not-installed-on-iOS)          */
+    /* ----------------------------------------------------------------------------- */
     #fallback-message {
       min-height: 100vh;
       background: #1A1423;
       color: #ECEFF4;
-      display: flex;
+      display: flex;              /* we'll switch this to 'flex' when we want to show it */
       align-items: center;
       justify-content: center;
       text-align: center;
@@ -35,7 +42,9 @@
       text-decoration: underline;
     }
 
-    /* Your existing CSS below... */
+    /* ================================================= */
+    /* 3) The real Trippr app’s CSS (exactly as before)  */
+    /* ================================================= */
     @font-face { font-family: 'Hippie Mods'; src: url('../../assets/fonts/Hippie Mods.otf') format('opentype'); }
     :root {
       --bg-color: #1A1423;
@@ -68,7 +77,6 @@
         radial-gradient(circle at 70% 70%, #63109e52, transparent 50%);
       z-index: -1;
     }
-    /* … rest of your existing CSS (header, main, nav, cards, planner, etc.) … */
     header {
       height: 8%;
       background: #000;
@@ -240,14 +248,18 @@
 </head>
 
 <body>
-  <!-- FALLBACK MESSAGE (hidden by default; shown only when not-iOS or not-installed) -->
+  <!-- ====================================================== -->
+  <!-- FALLBACK MESSAGE: hidden unless we explicitly “show” it -->
+  <!-- ====================================================== -->
   <div id="fallback-message"></div>
 
-  <!-- ACTUAL APP CONTENT (hidden by default; shown only when on iOS & standalone) -->
+  <!-- ====================================================================== -->
+  <!-- THE ACTUAL APP CONTENT: hidden unless we explicitly “show” it on iOS -->
+  <!-- ====================================================================== -->
   <div id="app-content">
     <header>Trippr</header>
     <main>
-      <!-- Home -->
+      <!-- Home Section -->
       <section id="home" class="section active">
         <h2>Home</h2>
         <div class="card">
@@ -271,7 +283,7 @@
         </div>
       </section>
 
-      <!-- Trip Planner -->
+      <!-- Trip Planner Section -->
       <section id="planner" class="section">
         <h2>Trip Planner</h2>
         <div class="card planner">
@@ -304,7 +316,7 @@
         <div id="result" class="card"></div>
       </section>
 
-      <!-- Trip Guide -->
+      <!-- Trip Guide Section -->
       <section id="guide" class="section">
         <h2>Trip Guide</h2>
         <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
@@ -408,7 +420,7 @@
       // Video URL (only loaded on demand)
       const badTripVideoURL = "https://www.youtube.com/embed/Hx3IH2H0bz0?autoplay=1&controls=0";
 
-      // Populate strain suggestions
+      // Populate strain suggestions on DOMContentLoaded
       window.addEventListener('DOMContentLoaded', () => {
         const datalist = document.getElementById('strain-suggestions');
         strainLibrary.forEach(s => {
@@ -486,44 +498,57 @@
     </script>
   </div>
 
-  <!-- DETECTION SCRIPT (placed after both divs) -->
+  <!-- =============================================================== -->
+  <!-- 4) DETECTION SCRIPT: runs AFTER both #fallback-message & #app-content -->
+  <!-- =============================================================== -->
   <script>
-    // 1) Detect iOS user-agent
-    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    // 2) On iOS, window.navigator.standalone === true only when launched from Home Screen
-    const isInStandalone = window.navigator.standalone === true;
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1) Detect iOS user-agent
+      const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      // 2) On iOS, navigator.standalone is true only when launched from Home Screen.
+      //    We also check display-mode: standalone as a fallback.
+      const isInStandalone = window.navigator.standalone === true
+        || window.matchMedia('(display-mode: standalone)').matches;
 
-    // 3) Grab both containers
-    const fallback = document.getElementById('fallback-message');
-    const appContent = document.getElementById('app-content');
+      const fallback   = document.getElementById('fallback-message');
+      const appContent = document.getElementById('app-content');
 
-    if (!isIos) {
-      // Not iOS at all
-      fallback.innerHTML = `
-        <div>
-          <h2>Trippr is only available on iOS.</h2>
-          <p>Please open this page on an iOS device, or 
-             <a href="https://discord.gg/MMJ5Cg3vQb" target="_blank">join our Discord</a> for updates.</p>
-        </div>`;
-      fallback.style.display = 'flex';
+      if (!isIos) {
+        // ------------------------------------------
+        // Case A: Not an iOS device at all → show
+        // “Open on iOS or join Discord” fallback
+        // ------------------------------------------
+        fallback.innerHTML = `
+          <div>
+            <h2>Trippr is only available as an iOS PWA.</h2>
+            <p>Please open this page on an iOS device, or 
+               <a href="https://discord.gg/MMJ5Cg3vQb" target="_blank">join our Discord</a> for updates.</p>
+          </div>`;
+        fallback.style.display = 'flex';
 
-    } else if (!isInStandalone) {
-      // On iOS Safari but NOT launched from the Home Screen
-      fallback.innerHTML = `
-        <div>
-          <h2>Install Trippr on your Home Screen</h2>
-          <p>Tap the <strong>Share</strong> button, then select <strong>Add to Home Screen</strong> to install Trippr as a PWA.</p>
-          <p>Once added, open Trippr from your home screen to use it.</p>
-        </div>`;
-      fallback.style.display = 'flex';
+      } else if (!isInStandalone) {
+        // --------------------------------------------------------------
+        // Case B: On iOS Safari (not yet installed as PWA) →
+        // show “Add to Home Screen” instructions
+        // --------------------------------------------------------------
+        fallback.innerHTML = `
+          <div>
+            <h2>Install Trippr on your Home Screen</h2>
+            <p>Tap the <strong>Share</strong> button, then select <strong>Add to Home Screen</strong> to install Trippr as a PWA.</p>
+            <p>Once added, open Trippr from your home screen to use it.</p>
+          </div>`;
+        fallback.style.display = 'flex';
 
-    } else {
-      // iOS AND in standalone mode → show the real app
-      appContent.style.display = 'block';
-    }
+      } else {
+        // -------------------------------------------------------
+        // Case C: On iOS AND launched from Home Screen → show UI
+        // -------------------------------------------------------
+        appContent.style.display = 'block';
+      }
 
-    // For debugging: log both flags so you can confirm what’s happening
-    console.log('isIos:', isIos, 'isInStandalone:', isInStandalone);
+      // Always log for debugging
+      console.log('isIos:', isIos, 'isInStandalone:', isInStandalone);
+    });
   </script>
 </body>
 </html>
