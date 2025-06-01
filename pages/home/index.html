@@ -15,22 +15,22 @@
   <link rel="manifest" href="../manifest.json" />
 
   <style>
-    /* -------------------------------------------------------------------------------- */
-    /* 1) Hide both containers by default; the script below will un-hide exactly one of them */
-    /* -------------------------------------------------------------------------------- */
+    /* ------------------------------------------------------------ */
+    /* 1) Hide both #app-content and #fallback-message by default.  */
+    /* ------------------------------------------------------------ */
     #app-content,
     #fallback-message {
       display: none;
     }
 
-    /* ----------------------------------------------------------------------------- */
-    /* 2) Styling for the fallback prompt (non-iOS or not-installed-on-iOS)          */
-    /* ----------------------------------------------------------------------------- */
+    /* ----------------------------------------------------------------- */
+    /* 2) Styling for the fallback prompt (non-iOS or not-installed-on-iOS) */
+    /* ----------------------------------------------------------------- */
     #fallback-message {
       min-height: 100vh;
       background: #1A1423;
       color: #ECEFF4;
-      display: flex;              /* we'll switch this to 'flex' when we want to show it */
+      display: flex;             /* will switch to 'flex' when we show it */
       align-items: center;
       justify-content: center;
       text-align: center;
@@ -42,19 +42,19 @@
       text-decoration: underline;
     }
 
-    /* ================================================= */
-    /* 3) The real Trippr app’s CSS (exactly as before)  */
-    /* ================================================= */
+    /* ========================================================= */
+    /* 3) The real Trippr app’s existing CSS (unchanged below)   */
+    /* ========================================================= */
     @font-face { font-family: 'Hippie Mods'; src: url('../../assets/fonts/Hippie Mods.otf') format('opentype'); }
     :root {
+      --header-height: 50px;       /* fixed header height */
+      --section-padding: 1.5rem;   /* padding inside each section */
+      --section-gap: 3rem;         /* vertical gap between sections */
       --bg-color: #1A1423;
       --text-color: #ECEFF4;
       --accent-gradient: linear-gradient(135deg, #8605ff, #302dd4);
       --card-radius: 16px;
       --blur-radius: 20px;
-      --header-height: 50px;
-      --section-gap: 3rem;
-      --section-padding: 1.5rem;
       --input-bg: rgba(255,255,255,0.1);
       --input-border: rgba(126,51,255,0.5);
       --input-height: 3rem;
@@ -78,22 +78,37 @@
       z-index: -1;
     }
     header {
-      height: 8%;
+      position: fixed;
+      top: env(safe-area-inset-top);   /* push header below the notch */
+      left: 0;
+      width: 100%;
+      height: var(--header-height);
       background: #000;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-family: 'Hippie Mods', cursive;
       font-size: 1.5rem;
       color: var(--text-color);
-      position: fixed; top: 0; width: 100%; z-index: 10;
       box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-      padding-top: 9%;
+      z-index: 10;
     }
     main {
+      /* Only reserve space for notch + header height, not extra padding */
+      padding-top: calc(
+        env(safe-area-inset-top)
+        + var(--header-height)
+      );
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-bottom: 1rem;
       flex: 1;
       overflow-y: auto;
-      padding: calc(var(--header-height) + var(--section-padding)) 1rem 1rem;
     }
-    .section { margin-bottom: var(--section-gap); padding: var(--section-padding) 0; }
+    .section {
+      padding-top: var(--section-padding);
+      margin-bottom: var(--section-gap);
+    }
     .section h2 {
       font-size: 1.5rem; margin-bottom: 1rem;
       border-left: 4px solid #8e5eff; padding-left: 0.75rem;
@@ -123,7 +138,6 @@
       color: #fff;
       font-size: 1rem;
       padding: 0.75rem;
-      width: auto;
       border: none;
       border-radius: var(--card-radius);
       margin-right: 0.5rem;
@@ -163,6 +177,7 @@
     nav .tab.active::after { opacity: 1; }
     section { display: none; }
     section.active { display: block; }
+
     .planner {
       display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
     }
@@ -498,56 +513,72 @@
     </script>
   </div>
 
-  <!-- =============================================================== -->
+  <!-- ============================================================== -->
   <!-- 4) DETECTION SCRIPT: runs AFTER both #fallback-message & #app-content -->
-  <!-- =============================================================== -->
+  <!-- ============================================================== -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      // 1) Detect iOS user-agent
+      let bypassShortcut = false;
+
+      // 1) Listen for Ctrl+Shift+B to bypass fallback
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.code === 'KeyB') {
+          bypassShortcut = true;
+          showApp();  // immediately reveal the app
+        }
+      });
+
+      // 2) Detect iOS user-agent
       const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      // 2) On iOS, navigator.standalone is true only when launched from Home Screen.
-      //    We also check display-mode: standalone as a fallback.
+
+      // 3) On iOS, navigator.standalone is true only when launched from Home Screen.
       const isInStandalone = window.navigator.standalone === true
         || window.matchMedia('(display-mode: standalone)').matches;
 
       const fallback   = document.getElementById('fallback-message');
       const appContent = document.getElementById('app-content');
 
-      if (!isIos) {
-        // ------------------------------------------
-        // Case A: Not an iOS device at all → show
-        // “Open on iOS or join Discord” fallback
-        // ------------------------------------------
-        fallback.innerHTML = `
-          <div>
-            <h2>Trippr is only available as an iOS PWA.</h2>
-            <p>Please open this page on an iOS device, or 
-               <a href="https://discord.gg/MMJ5Cg3vQb" target="_blank">join our Discord</a> for updates.</p>
-          </div>`;
-        fallback.style.display = 'flex';
-
-      } else if (!isInStandalone) {
-        // --------------------------------------------------------------
-        // Case B: On iOS Safari (not yet installed as PWA) →
-        // show “Add to Home Screen” instructions
-        // --------------------------------------------------------------
-        fallback.innerHTML = `
-          <div>
-            <h2>Install Trippr on your Home Screen</h2>
-            <p>Tap the <strong>Share</strong> button, then select <strong>Add to Home Screen</strong> to install Trippr as a PWA.</p>
-            <p>Once added, open Trippr from your home screen to use it.</p>
-          </div>`;
-        fallback.style.display = 'flex';
-
-      } else {
-        // -------------------------------------------------------
-        // Case C: On iOS AND launched from Home Screen → show UI
-        // -------------------------------------------------------
+      // 4) Utility function to un-hide the real app
+      function showApp() {
         appContent.style.display = 'block';
+        fallback.style.display = 'none';
       }
 
-      // Always log for debugging
-      console.log('isIos:', isIos, 'isInStandalone:', isInStandalone);
+      // 5) Only if we have NOT pressed the bypass shortcut, do the normal checks:
+      if (!bypassShortcut) {
+        if (!isIos) {
+          // Case A: Not iOS → show fallback
+          fallback.innerHTML = `
+            <div>
+              <h2>Trippr is only available as an iOS PWA.</h2>
+              <p>Please open this page on an iOS device, or 
+                 <a href="https://discord.gg/MMJ5Cg3vQb" target="_blank">join our Discord</a> for updates.</p>
+            </div>`;
+          fallback.style.display = 'flex';
+
+        } else if (!isInStandalone) {
+          // Case B: iOS Safari but not installed → show “Add to Home Screen”
+          fallback.innerHTML = `
+            <div>
+              <h2>Install Trippr on your Home Screen</h2>
+              <p>Tap the <strong>Share</strong> button, then select <strong>Add to Home Screen</strong> to install Trippr as a PWA.</p>
+              <p>Once added, open Trippr from your home screen to use it.</p>
+            </div>`;
+          fallback.style.display = 'flex';
+
+        } else {
+          // Case C: iOS + standalone → show the real app
+          showApp();
+        }
+      } else {
+        // If bypassShortcut is already true (e.g. if ctrl+shift+B was pressed early), just show the app:
+        showApp();
+      }
+
+      // Always log for debugging:
+      console.log('bypassShortcut:', bypassShortcut,
+                  'isIos:', isIos,
+                  'isInStandalone:', isInStandalone);
     });
   </script>
 </body>
