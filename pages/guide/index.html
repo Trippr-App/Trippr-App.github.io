@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trippr</title>
+   <link rel="icon" href="../../assets/images/logo.png" />
+  <!-- Load Hippie Mods for headers -->
+  <style>
+    /* 1. Import Hippie Mods font */
+    @font-face {
+      font-family: 'Hippie Mods';
+      src: url('../../assets/fonts/Hippie Mods.otf') format('opentype');
+    }
+
+    /* 2. Psychedelic but readable color palette */
+    :root {
+      --bg-color: #2a023b;           /* deep purple */
+      --text-color: #f0f0e8;         /* off-white/cream */
+      --accent-primary: #ff0080;     /* neon magenta */
+      --accent-secondary: #00ffd5;   /* electric turquoise */
+      --border-color: #6f00ff;       /* vivid violet */
+      --card-radius: 8px;
+      --header-height: 60px;
+      --section-gap: 2.5rem;
+      --section-padding: 2rem;
+      --line-height: 1.75;
+    }
+
+    /* Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: var(--line-height);
+      padding-bottom: 4rem; /* breathing room at bottom */
+    }
+
+    a {
+      color: var(--accent-secondary);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    header {
+      height: var(--header-height);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-primary);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      
+    }
+    header h1 {
+      font-family: 'Hippie Mods', cursive;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+    }
+
+    main.container {
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 0 var(--section-padding);
+    }
+
+    .section {
+      margin-bottom: var(--section-gap);
+      padding-bottom: var(--section-gap);
+      border-bottom: 2px solid var(--border-color);
+    }
+    .section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    h2 {
+      font-family: 'Hippie Mods', cursive;
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      color: var(--accent-primary);
+    }
+    h3 {
+      font-family: 'Hippie Mods', cursive;
+      font-size: 1.3rem;
+      margin-bottom: 0.75rem;
+      color: var(--accent-primary);
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+    }
+
+    ul {
+      list-style: disc inside;
+      margin-left: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    ul li {
+      margin-bottom: 0.75rem;
+    }
+    strong {
+      color: var(--accent-primary);
+    }
+
+    /* Video styling */
+    video {
+      display: block;
+      width: 100%;
+      max-width: 700px;
+      border-radius: var(--card-radius);
+      margin-top: 1rem;
+      box-shadow: 0 0 12px rgba(255, 0, 128, 0.6);
+    }
+
+    /* Intro text styling */
+    .intro p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+
+    /* Closing slogan */
+    .closing p {
+      font-style: italic;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    /* Example panic button styling */
+    .button {
+      background-color: var(--accent-primary);
+      border: 2px solid var(--accent-secondary);
+      border-radius: 8px;
+      color: var(--text-color);
+      cursor: pointer;
+      display: inline-block;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      text-transform: uppercase;
+      text-decoration: none;
+      margin-top: 1rem;
+    }
+    .button:hover {
+      background-color: var(--accent-secondary);
+      border-color: var(--accent-primary);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>First-Time Guide</h1>
+  </header>
+
+  <main class="container">
+
+    <!-- Introduction -->
+    <section class="section intro">
+      <h2>Prepare to be changed</h2>
+      <p>
+        Have you ever wondered what it would feel like if you discovered a secret world behind the curtain of reality? Probably not, but psychedelics—like magic mushrooms, LSD, or even MDMA—can put you on a mind-bending journey. But before you dive in, it helps to know what to expect and how to set yourself up for a smooth, fun ride. We’ve taken the key points from Psych Central’s comprehensive article on first-time psychedelics and boiled them down into a friendly, down-to-earth facts. Think of this as your pre-trip checklist, minus the nerdy stuff and full of info.
+      </p>
+    </section>
+
+    <!-- The Experience -->
+    <section class="section">
+      <h2>What to Expect</h2>
+      <p>
+        Every psychedelic is its own kind of “trip”, but there are some shared similarities. You might notice:
+      </p>
+      <ul>
+        <li>
+          <strong>Visuals &amp; Colors:</strong> Imagine things breathing, colors pulsing, or patterns dancing across surfaces.
+          <br /><br />
+          <!-- Embedded video, full width of container -->
+          <video
+            src="../../assets/videos/visuals.mp4"
+            type="video/mp4"
+            autoplay
+            loop
+            muted
+            playsinline
+          ></video>
+        </li>
+        <li>
+          <strong>Mind Expansion:</strong> You may end up feeling more intelligent, or even like a god of some sort. Thoughts can feel like liquid—one idea flows into the next; your short-term memory will be terrible. Expect a lot of “What was I doing again?”
+        </li>
+        <li>
+          <strong>Body Sensations:</strong> Tingling arms, a racing heart, jaw tension (clench-and-release), etc. Totally normal—just ride it out. If it bothers you, recognize that and know it isn’t permanent.
+        </li>
+        <li>
+          <strong>Time Warp:</strong> A minute could feel like an hour, or an hour could feel like a minute—there won’t be much in between.
+        </li>
+        <li>
+          <strong>Emotional Waves:</strong> You might swing from euphoria to a heavy, introspective moment. Both sides are part of the trip. Don’t focus on negative emotions or you’ll have a negative trip. Think of what makes you happy and ensure you are comfortable.
+        </li>
+      </ul>
+      <p>
+        Remember: these sensations can be wild, but they pass. Trust that your mind and setting are there to provide you peace.
+      </p>
+    </section>
+
+    <!-- Staying Safe -->
+    <section class="section">
+      <h2>Safety First</h2>
+      <p>
+        Before you pack your “toolkit” of pillows, playlists, and snacks, check for any red flags:
+      </p>
+      <ul>
+        <li>
+          <strong>Health Conditions:</strong> If you have a history of schizophrenia, bipolar disorder, heart issues, or seizure disorders, take extra caution. These experiences can amplify underlying vulnerabilities.
+        </li>
+        <li>
+          <strong>Medications &amp; Interactions:</strong> SSRIs, mood stabilizers, or other prescriptions can change how psychedelics hit your system. Chat with your doctor or therapist to see if anything clashes.
+        </li>
+        <li>
+          <strong>Age &amp; Life Stage:</strong> Most pros recommend waiting until you’re at least 18. Your brain is still sculpting itself in your teens—give it time before tripping.
+        </li>
+        <li>
+          <strong>Polydrug Use:</strong> Mixing alcohol, cannabis, or other substances can turn your trip sideways. Stick to one psychedelic at a time—“start low, go slow.”
+        </li>
+      </ul>
+      <p>
+        If you’re ever feeling overwhelmed—even if it’s just dark thoughts—reach out to a trusted friend or family member. You don’t have to ride the storm alone.
+      </p>
+    </section>
+
+    <!-- Set & Setting -->
+    <section class="section">
+      <h2>Set &amp; Setting</h2>
+      <p>
+        This is a very important section to read—it can make or break a trip:
+      </p>
+      <ul>
+        <li>
+          <strong>Mindset:</strong> Check in with yourself. Why are you tripping? Are you curious, seeking healing, or just chasing a novel vibe? Get your headspace aligned before you ingest anything.
+        </li>
+        <li>
+          <strong>Setting:</strong> Choose a cozy, familiar place—your living room decked with fairy lights, a trusted friend’s pad, or a guided retreat center. Avoid public places or chaotic crowds for your first trip.
+        </li>
+        <li>
+          <strong>Substance:</strong> Know what you’re taking. If it’s magic mushrooms, weigh your dosage. If it’s LSD, verify (if possible) and start with a microdose before committing to a full tab.
+        </li>
+        <li>
+          <strong>Dosage:</strong> Less is more for your first time. Half the recommended dose can still unlock the door without smashing it down. You can’t get off the rollercoaster once it takes off.
+        </li>
+      </ul>
+      <p>
+        When you hit the sweet spot, let go of expectations. Embrace whatever comes—good or tough. That’s where the real fun is: self-exploration.
+      </p>
+    </section>
+
+    <!-- Working with Pros -->
+    <section class="section">
+      <h2>Buddy Up or Go Pro</h2>
+      <p>
+        Solo trips can work, but having a <em>trip sitter</em>—someone sober who’s done their homework—can give you the best and safest trip possible. For an extra layer of guidance, look into:
+      </p>
+      <ul>
+        <li>
+          <strong>Legal Retreats &amp; Ceremonies:</strong> Organizations like MAPS, Fluence, or Psychedelic Passage often host structured, professionally guided sessions. They handle dosing, integration circles, and aftercare so you can focus on the journey.
+        </li>
+        <li>
+          <strong>Hotlines &amp; Helplines:</strong> If you need immediate support—during a challenging set—Fireside Project’s hotline is there to walk you through tough patches.
+        </li>
+      </ul>
+      <p>
+        Working with qualified facilitators can transform a “wild ride” into a much calmer journey.
+      </p>
+    </section>
+
+    <!-- Trusting the Process -->
+    <section class="section">
+      <h2>Trust the Flow</h2>
+      <p>
+        Psychedelics often poke at your buried feelings, your shadow self, or long-forgotten memories. When things get intense:
+      </p>
+      <ul>
+        <li>
+          <strong>Don’t Panic:</strong> If the visuals spike or your mind goes into overdrive, take a few deep breaths. Remind yourself, “Everything I am feeling is temporary.”
+        </li>
+        <li>
+          <strong>Let Go:</strong> You can either grip the experience and battle it—or loosen your grip and let the wave carry you. Surrender can feel scary, but it’s where the magic happens.
+        </li>
+        <li>
+          <strong>Stay Present:</strong> Focus on your breath, your heartbeat, or a comforting playlist. Ground yourself with simple anchors—like cozy socks or a warm drink.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Are You a Good Candidate? -->
+    <section class="section">
+      <h2>Is This Trip for You?</h2>
+      <p>
+        Here’s the lowdown on who’s primed for a first psychedelic voyage:
+      </p>
+      <ul>
+        <li>You’re ready to face your fears—no hiding from whatever bubbles up.</li>
+        <li>You’re open-minded, curious, and willing to let go of expectations.</li>
+        <li>You’ve read up on risks, talked to your doc or a trusted friend, and feel grounded.</li>
+        <li>You’re committed to integrating the experience—meaning you’ll journal, meditate, or chat about what you learned afterward.</li>
+      </ul>
+      <p>
+        If you checked off most of these, congrats—you might just be a good fit. If not, take your time. There’s no rush to pop that first tab.
+      </p>
+    </section>
+
+    <!-- Closing -->
+    <section class="section closing">
+      <h2>Ready to Embark?</h2>
+      <p>
+        With this guide in hand, you’ve got the essentials to plan a safe, insightful, and memorable first trip. Remember: set your intentions, create a chill environment, start with a small dose, and surround yourself with good energy. Float on your own timeline, embrace whatever comes, and know that you can always dial back or pause if things feel too intense.
+      </p>
+      <p>
+        Peace &amp; Love. 🌈✌️
+      </p>
+    </section>
+
+  </main>
+</body>
+</html>
